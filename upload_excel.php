@@ -47,15 +47,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['excelFile'])) {
                     echo "<script>console.log('Processing row: " . addslashes(implode(",", $data)) . "');</script>";
 
                     // Ensure the row has valid data (e.g., 10 columns)
-                    if (count($data) >= 9) {
+                    if (count($data) >= 19) {
                         // Prepare the SQL query to insert data
                         $stmt = $conn->prepare("INSERT INTO tenants
-                        (tenant_name, address, mobile_no, email, property_name, property_type, property_location, property_owners, monthly_rent, deposit, rent_status)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        (tenant_name, address, mobile_no, email, property_name, property_type, property_location, property_owners, monthly_rent, deposit, rent_status, amount_paid, amount_pending, payment_mode, transaction_details, bank_name, property_area, electricity_provider, rent_pay_date)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        ");
 
                         if ($stmt) {
                             // Bind the parameters and execute the query
-                            $stmt->bind_param("ssssssssdds", $data[0], $data[1], $data[2], $data[3], $data[4], $data[5], $data[6], $data[7], $data[8], $data[9], $data[10]);
+                            $stmt->bind_param("ssssssssddsddsssdsd", // Corrected the data types
+                            $data[1], // tenant_name
+                            $data[2], // address
+                            $data[3], // mobile_no
+                            $data[4], // email
+                            $data[5], // property_name
+                            $data[6], // property_type
+                            $data[7], // property_location
+                            $data[8], // property_owners
+                            $data[9], // monthly_rent
+                            $data[10], // deposit
+                            $data[11], // rent_status
+                            $data[12], // amount_paid
+                            $data[13], // amount_pending
+                            $data[14], // payment_mode
+                            $data[15], // transaction_details
+                            $data[16], // bank_name
+                            $data[17], // property_area
+                            $data[18], // electricity_provider
+                            $data[19]
+                        );
 
 
 

@@ -56,6 +56,7 @@ if (isset($_SESSION['upload_status'])) {
                 <th>Email</th>
                 <th>Property</th>
                 <th>Rent</th>
+                <th>Rent Pay Date</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -67,6 +68,7 @@ if (isset($_SESSION['upload_status'])) {
                     <td><?= $row['email'] ?></td>
                     <td><?= $row['property_name'] ?></td>
                     <td><?= $row['monthly_rent'] ?></td>
+                    <td><?= $row['rent_pay_date'] ?></td>
                     <td>
                     <a href="tenant_form.php?id=<?= $row['id'] ?>" class="edit-btn">Edit</a>
                     <a href="manager.php?delete_id=<?= $row['id'] ?>&confirm_delete=yes" 

@@ -14,7 +14,7 @@ if (isset($_GET['id'])) {
     }
 } else {
     // Initialize the tenant data variables for the form
-    $tenant_name = $address = $mobile_no = $email = $property_name = $property_type = $property_location = $property_owners = $monthly_rent = $deposit = $rent_status = '';
+    $tenant_name = $address = $mobile_no = $email = $property_name = $property_type = $property_location = $property_owners = $monthly_rent = $deposit = $rent_status = $amount_paid = $amount_pending = $payment_mode = $transaction_details = $bank_name = $property_area = $electricity_provider = $rent_pay_date = '';
 }
 
 // Handle form submission for insert/update
@@ -36,6 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $payment_mode = $_POST['payment_mode'];
     $transaction_details = $_POST['transaction_details'];
     $bank_name = $_POST['bank_name'];
+    $property_area = $_POST['property_area'];
+    $electricity_provider = $_POST['electricity_provider'];
+    $rent_pay_date = !empty($_POST['rent_pay_date']) ? $_POST['rent_pay_date'] : NULL;
 
     if (isset($_POST['id'])) {
         // Update the tenant data
@@ -53,13 +56,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 property_owners = ?,
                 monthly_rent = ?,
                 deposit = ?,
-                rent_status = ?
+                rent_status = ?,
+                amount_paid = ?,
+                amount_pending = ?,
+                payment_mode = ?,
+                transaction_details = ?,
+                bank_name = ?,
+                property_area = ?,
+                electricity_provider = ?,
+                rent_pay_date = ?
             WHERE id = ?"
         );
 
         // Corrected type string to include 12 variables
         $stmt->bind_param(
-            "ssssssssddsi",
+            "ssssssssddsddsssdsdi",
             $tenant_name,
             $address,
             $mobile_no,
@@ -71,6 +82,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $monthly_rent,
             $deposit,
             $rent_status,
+            $amount_paid,
+            $amount_pending,
+            $payment_mode,
+            $transaction_details,
+            $bank_name,
+            $property_area,
+            $electricity_provider,
+            $rent_pay_date,
             $id
         );
 
@@ -83,8 +102,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->close();
     } else {
         // Insert new tenant data
-        $stmt = $conn->prepare("INSERT INTO tenants (tenant_name, address, mobile_no, email, property_name, property_type, property_location, property_owners, monthly_rent, deposit, rent_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssssssdds", $tenant_name, $address, $mobile_no, $email, $property_name, $property_type, $property_location, $property_owners, $monthly_rent, $deposit, $rent_status);
+        $stmt = $conn->prepare("INSERT INTO tenants (tenant_name, address, mobile_no, email, property_name, property_type, property_location, property_owners, monthly_rent, deposit, rent_status, amount_paid, amount_pending, payment_mode, transaction_details, bank_name, property_area, electricity_provider, rent_pay_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssssssddsddsssdsd", 
+        $tenant_name, 
+        $address, 
+        $mobile_no, 
+        $email, 
+        $property_name, 
+        $property_type, 
+        $property_location, 
+        $property_owners, 
+        $monthly_rent, 
+        $deposit, 
+        $rent_status, 
+        $amount_paid, 
+        $amount_pending, 
+        $payment_mode, 
+        $transaction_details, 
+        $bank_name, 
+        $property_area, 
+        $electricity_provider, 
+        $rent_pay_date,);
 
         if ($stmt->execute()) {
             $message = "<p style='color: green;'>Tenant details inserted successfully!</p>";
@@ -158,9 +196,45 @@ $conn->close();
         <label for="rent_status">Rent Status:</label>
         <select   select name="rent_status" id="rent_status" required>
             <option value="">Select Rent Status</option>
-            <option value="Paid" <?= isset($tenant) && $tenant['rent_status'] === 'Paid' ? 'selected' : '' ?>>Paid</option>
-            <option value="Pending" <?= isset($tenant) && $tenant['rent_status'] === 'Pending' ? 'selected' : '' ?>>Pending</option>
+            <option value="Rent Paid" <?= isset($tenant) && $tenant['rent_status'] === 'Rent Paid' ? 'selected' : '' ?>>Rent Paid</option>
+            <option value="Rent Pending" <?= isset($tenant) && $tenant['rent_status'] === 'Rent Pending' ? 'selected' : '' ?>>Rent Pending</option>
+            <option value="Deposit Paid" <?= isset($tenant) && $tenant['rent_status'] === 'Paid' ? 'selected' : '' ?>>Deposit Paid</option>
+            <option value="Deposit Pending" <?= isset($tenant) && $tenant['rent_status'] === 'Deposit Pending' ? 'selected' : '' ?>>Deposit Pending</option>
         </select>
+
+        <label for="amount_paid">Paid Amount:</label>
+        <input type="text" name="amount_paid" id="amount_paid" value="<?= isset($tenant) ? $tenant['amount_paid'] : '' ?>">
+
+        <label for="amount_pending">Pending Amount:</label>
+        <input type="text" name="amount_pending" id="amount_pending" value="<?= isset($tenant) ? $tenant['amount_pending'] : '' ?>">
+
+        <label for="payment_mode">Payment Mode:</label>
+        <select   select name="payment_mode" id="payment_mode" required>
+            <option value="">Select Rent Status</option>
+            <option value="Online" <?= isset($tenant) && $tenant['payment_mode'] === 'Online' ? 'selected' : '' ?>>Online</option>
+            <option value="Cash" <?= isset($tenant) && $tenant['payment_mode'] === 'Cash' ? 'selected' : '' ?>>Cash</option>
+        </select>
+
+        <label for="transaction_details">Transaction Details:</label>
+        <input type="text" name="transaction_details" id="transaction_details" value="<?= isset($tenant) ? $tenant['transaction_details'] : '' ?>" required>
+
+        <label for="bank_name">Bank Name:</label>
+        <input type="text" name="bank_name" id="bank_name" value="<?= isset($tenant) ? $tenant['bank_name'] : '' ?>" required>
+        
+        <label for="property_area">Property Area:</label>
+        <input type="text" name="property_area" id="property_area" value="<?= isset($tenant) ? $tenant['property_area'] : '' ?>">
+
+        <label for="electricity_provider">Electricity Provider:</label>
+        <select   select name="electricity_provider" id="payment_mode" required>
+            <option value="">Select Rent Status</option>
+            <option value="Adani" <?= isset($tenant) && $tenant['payment_mode'] === 'Adani' ? 'selected' : '' ?>>Adani</option>
+            <option value="MACB" <?= isset($tenant) && $tenant['payment_mode'] === 'MACB' ? 'selected' : '' ?>>MACB</option>
+        </select>
+
+        <label for="rent_pay_date">Rent Pay Date:</label>
+        <input type=date name="rent_pay_date" id="rent_pay_date" value="<?= isset($tenant) ? $tenant['rent_pay_date'] : '' ?>" required>
+
+
 
         <button type="submit">Submit</button>
     </form>
