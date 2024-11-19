@@ -144,100 +144,337 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tenant Form</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
 
+        body {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+            background-color: #f5f8fa;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header img {
+            width: 50px;
+            height: auto;
+        }
+
+        .header h1 {
+            color: #2d3e50;
+            font-size: 1.5rem;
+            margin-left: 10px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .back-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+
+        h2 {
+            text-align: center;
+            color: #007bff;
+        }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            outline: none;
+            width: 100%; /* Use full width to be responsive */
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        select:focus {
+            border-color: #007bff;
+        }
+
+        .form-group {
+            flex: 1 1 calc(50% - 20px);
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            cursor: pointer;
+            align-self: center;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .message {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            transition: 0.3s;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            padding: 10px;
+            border-bottom: 1px solid #444;
+        }
+
+        .sidebar ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .hamburger {
+            font-size: 30px;
+            cursor: pointer;
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        /* Media Queries for Mobile Devices */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            .form-group {
+                flex: 1 1 100%; /* Use full width on smaller screens */
+            }
+            button {
+                width: 100%; /* Make the button full width */
+            }
+            .hamburger {
+                display: block;
+            }
+        }
+    </style>
 </head>
 <body>
-<?php if ($message): ?>
-        <div class="message"><?php echo $message; ?></div>
-    <?php endif; ?>
-    <form method="POST">
-        <!-- Hidden field to store tenant ID (for editing) -->
-        <?php if (isset($tenant)): ?>
-            <input type="hidden" name="id" value="<?= $tenant['id'] ?>">
+    <div class="header">
+        <img src="logo.png" alt="App Logo">
+        <h1>Rental Management App</h1>
+        <span class="hamburger" onclick="toggleSidebar()">☰</span>
+    </div>
+    
+
+    <!-- Back Button -->
+    <a href="welcome.php" class="back-button">Back</a>
+        <h2>Tenant Form</h2>
+        <?php if ($message): ?>
+            <div class="message"><?php echo $message; ?></div>
         <?php endif; ?>
+        <form method="POST">
+            <!-- Hidden field for editing -->
+            <?php if (isset($tenant)): ?>
+                <input type="hidden" name="id" value="<?= $tenant['id'] ?>">
+            <?php endif; ?>
 
-        <label for="tenant_name">Tenant Name:</label>
-        <input type="text" name="tenant_name" id="tenant_name" value="<?= isset($tenant) ? $tenant['tenant_name'] : '' ?>" required>
+            <div class="form-group">
+                <label for="tenant_name">Tenant Name:</label>
+                <input type="text" name="tenant_name" id="tenant_name" value="<?= isset($tenant) ? $tenant['tenant_name'] : '' ?>" required>
+            </div>
 
-        <label for="address">Address:</label>
-        <input type="text" name="address" id="address" value="<?= isset($tenant) ? $tenant['address'] : '' ?>" required>
+            <div class="form-group">
+                <label for="address">Address:</label>
+                <input type="text" name="address" id="address" value="<?= isset($tenant) ? $tenant['address'] : '' ?>" required>
+            </div>
 
-        <label for="mobile_no">Contact:</label>
-        <input type="text" name="mobile_no" id="mobile_no" value="<?= isset($tenant) ? $tenant['mobile_no'] : '' ?>" required>
+            <div class="form-group">
+                <label for="mobile_no">Contact:</label>
+                <input type="text" name="mobile_no" id="mobile_no" value="<?= isset($tenant) ? $tenant['mobile_no'] : '' ?>" required>
+            </div>
 
-        <label for="email">Email:</label>
-        <input type="text" name="email" id="email" value="<?= isset($tenant) ? $tenant['email'] : '' ?>" required>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="text" name="email" id="email" value="<?= isset($tenant) ? $tenant['email'] : '' ?>" required>
+            </div>
 
-        <label for="property_name">Property:</label>
-        <input type="text" name="property_name" id="property_name" value="<?= isset($tenant) ? $tenant['property_name'] : '' ?>" required>
+            <div class="form-group">
+                <label for="property_name">Property:</label>
+                <input type="text" name="property_name" id="property_name" value="<?= isset($tenant) ? $tenant['property_name'] : '' ?>" required>
+            </div>
 
-        <label for="property_type">Property Type:</label>
-        <select   select name="property_type" id="property_type" required>
-            <option value="">Select Property Type</option>
-            <option value="SPA" <?= isset($tenant) && $tenant['property_type'] === 'SPA' ? 'selected' : '' ?>>SPA</option>
-            <option value="MALL" <?= isset($tenant) && $tenant['property_type'] === 'MALL' ? 'selected' : '' ?>>MALL</option>
-            <option value="HOTEL" <?= isset($tenant) && $tenant['property_type'] === 'HOTEL' ? 'selected' : '' ?>>HOTEL</option>
-            <option value="SHOWROOM" <?= isset($tenant) && $tenant['property_type'] === 'SHOWROOM' ? 'selected' : '' ?>>SHOWROOM</option>
-            <option value="HOUSE" <?= isset($tenant) && $tenant['property_type'] === 'HOUSE' ? 'selected' : '' ?>>HOUSE</option>
-        </select>
+            <div class="form-group">
+                <label for="property_type">Property Type:</label>
+                <select name="property_type" id="property_type" required>
+                    <option value="">Select Property Type</option>
+                    <option value="SPA" <?= isset($tenant) && $tenant['property_type'] === 'SPA' ? 'selected' : '' ?>>SPA</option>
+                    <option value="MALL" <?= isset($tenant) && $tenant['property_type'] === 'MALL' ? 'selected' : '' ?>>MALL</option>
+                    <option value="HOTEL" <?= isset($tenant) && $tenant['property_type'] === 'HOTEL' ? 'selected' : '' ?>>HOTEL</option>
+                    <option value="SHOWROOM" <?= isset($tenant) && $tenant['property_type'] === 'SHOWROOM' ? 'selected' : '' ?>>SHOWROOM</option>
+                    <option value="HOUSE" <?= isset($tenant) && $tenant['property_type'] === 'HOUSE' ? 'selected' : '' ?>>HOUSE</option>
+                </select>
+            </div>
 
-        <label for="property_location">Location:</label>
-        <input type="text" name="property_location" id="property_location" value="<?= isset($tenant) ? $tenant['property_location'] : '' ?>" required>
+            <div class="form-group">
+                <label for="property_location">Location:</label>
+                <input type="text" name="property_location" id="property_location" value="<?= isset($tenant) ? $tenant['property_location'] : '' ?>" required>
+            </div>
 
-        <label for="property_owners">Owner:</label>
-        <input type="text" name="property_owners" id="property_owners" value="<?= isset($tenant) ? $tenant['property_owners'] : '' ?>" required>
+            <div class="form-group">
+                <label for="property_owners">Owner:</label>
+                <input type="text" name="property_owners" id="property_owners" value="<?= isset($tenant) ? $tenant['property_owners'] : '' ?>" required>
+            </div>
 
-        <label for="monthly_rent">Monthly Rent:</label>
-        <input type="text" name="monthly_rent" id="monthly_rent" value="<?= isset($tenant) ? $tenant['monthly_rent'] : '' ?>" required>
+            <div class="form-group">
+                <label for="monthly_rent">Monthly Rent:</label>
+                <input type="text" name="monthly_rent" id="monthly_rent" value="<?= isset($tenant) ? $tenant['monthly_rent'] : '' ?>" required>
+            </div>
 
-        <label for="deposit">Deposit:</label>
-        <input type="text" name="deposit" id="deposit" value="<?= isset($tenant) ? $tenant['deposit'] : '' ?>" required>
+            <div class="form-group">
+                <label for="deposit">Deposit:</label>
+                <input type="text" name="deposit" id="deposit" value="<?= isset($tenant) ? $tenant['deposit'] : '' ?>" required>
+            </div>
 
-        <label for="rent_status">Rent Status:</label>
-        <select   select name="rent_status" id="rent_status" required>
-            <option value="">Select Rent Status</option>
-            <option value="Rent Paid" <?= isset($tenant) && $tenant['rent_status'] === 'Rent Paid' ? 'selected' : '' ?>>Rent Paid</option>
-            <option value="Rent Pending" <?= isset($tenant) && $tenant['rent_status'] === 'Rent Pending' ? 'selected' : '' ?>>Rent Pending</option>
-            <option value="Deposit Paid" <?= isset($tenant) && $tenant['rent_status'] === 'Paid' ? 'selected' : '' ?>>Deposit Paid</option>
-            <option value="Deposit Pending" <?= isset($tenant) && $tenant['rent_status'] === 'Deposit Pending' ? 'selected' : '' ?>>Deposit Pending</option>
-        </select>
+            <div class="form-group">
+                <label for="rent_status">Rent Status:</label>
+                <select name="rent_status" id="rent_status" required>
+                    <option value="">Select Rent Status</option>
+                    <option value="Rent Paid" <?= isset($tenant) && $tenant['rent_status'] === 'Rent Paid' ? 'selected' : '' ?>>Rent Paid</option>
+                    <option value="Rent Pending" <?= isset($tenant) && $tenant['rent_status'] === 'Rent Pending' ? 'selected' : '' ?>>Rent Pending</option>
+                    <option value="Deposit Paid" <?= isset($tenant) && $tenant['rent_status'] === 'Paid' ? 'selected' : '' ?>>Deposit Paid</option>
+                    <option value="Deposit Pending" <?= isset($tenant) && $tenant['rent_status'] === 'Deposit Pending' ? 'selected' : '' ?>>Deposit Pending</option>
+                </select>
+            </div>
 
-        <label for="amount_paid">Paid Amount:</label>
-        <input type="text" name="amount_paid" id="amount_paid" value="<?= isset($tenant) ? $tenant['amount_paid'] : '' ?>">
+            <div class="form-group">
+                <label for="amount_paid">Paid Amount:</label>
+                <input type="text" name="amount_paid" id="amount_paid" value="<?= isset($tenant) ? $tenant['amount_paid'] : '' ?>">
+            </div>
 
-        <label for="amount_pending">Pending Amount:</label>
-        <input type="text" name="amount_pending" id="amount_pending" value="<?= isset($tenant) ? $tenant['amount_pending'] : '' ?>">
+            <div class="form-group">
+                <label for="amount_pending">Pending Amount:</label>
+                <input type="text" name="amount_pending" id="amount_pending" value="<?= isset($tenant) ? $tenant['amount_pending'] : '' ?>">
+            </div>
 
-        <label for="payment_mode">Payment Mode:</label>
-        <select   select name="payment_mode" id="payment_mode" required>
-            <option value="">Select Rent Status</option>
-            <option value="Online" <?= isset($tenant) && $tenant['payment_mode'] === 'Online' ? 'selected' : '' ?>>Online</option>
-            <option value="Cash" <?= isset($tenant) && $tenant['payment_mode'] === 'Cash' ? 'selected' : '' ?>>Cash</option>
-        </select>
+            <div class="form-group">
+                <label for="payment_mode">Payment Mode:</label>
+                <select name="payment_mode" id="payment_mode" required>
+                    <option value="">Select Payment Mode</option>
+                    <option value="Online" <?= isset($tenant) && $tenant['payment_mode'] === 'Online' ? 'selected' : '' ?>>Online</option>
+                    <option value="Cash" <?= isset($tenant) && $tenant['payment_mode'] === 'Cash' ? 'selected' : '' ?>>Cash</option>
+                </select>
+            </div>
 
-        <label for="transaction_details">Transaction Details:</label>
-        <input type="text" name="transaction_details" id="transaction_details" value="<?= isset($tenant) ? $tenant['transaction_details'] : '' ?>" required>
+            <div class="form-group">
+                <label for="transaction_details">Transaction Details:</label>
+                <input type="text" name="transaction_details" id="transaction_details" value="<?= isset($tenant) ? $tenant['transaction_details'] : '' ?>" required>
+            </div>
 
-        <label for="bank_name">Bank Name:</label>
-        <input type="text" name="bank_name" id="bank_name" value="<?= isset($tenant) ? $tenant['bank_name'] : '' ?>" required>
-        
-        <label for="property_area">Property Area:</label>
-        <input type="text" name="property_area" id="property_area" value="<?= isset($tenant) ? $tenant['property_area'] : '' ?>">
+            <div class="form-group">
+                <label for="bank_name">Bank Name:</label>
+                <input type="text" name="bank_name" id="bank_name" value="<?= isset($tenant) ? $tenant['bank_name'] : '' ?>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="property_area">Property Area:</label>
+                <input type="text" name="property_area" id="property_area" value="<?= isset($tenant) ? $tenant['property_area'] : '' ?>" required>
+            </div>
 
-        <label for="electricity_provider">Electricity Provider:</label>
-        <select   select name="electricity_provider" id="payment_mode" required>
-            <option value="">Select Rent Status</option>
-            <option value="Adani" <?= isset($tenant) && $tenant['payment_mode'] === 'Adani' ? 'selected' : '' ?>>Adani</option>
-            <option value="MACB" <?= isset($tenant) && $tenant['payment_mode'] === 'MACB' ? 'selected' : '' ?>>MACB</option>
-        </select>
+            <div class="form-group">
+                <label for="electricity_provider">Electricity Provider:</label>
+                <select name="electricity_provider" id="electricity_provider" required>
+                    <option value="">Select Electricity Provider</option>
+                    <option value="Adani" <?= isset($tenant) && $tenant['electricity_provider'] === 'Adani' ? 'selected' : '' ?>>Adani</option>
+                    <option value="MACB" <?= isset($tenant) && $tenant['electricity_provider'] === 'MACB' ? 'selected' : '' ?>>MACB</option>
+                </select>
+            </div>
 
-        <label for="rent_pay_date">Rent Pay Date:</label>
-        <input type=date name="rent_pay_date" id="rent_pay_date" value="<?= isset($tenant) ? $tenant['rent_pay_date'] : '' ?>" required>
+            <div class="form-group">
+                <label for="rent_pay_date">Rent Pay Date:</label>
+                <input type="date" name="rent_pay_date" id="rent_pay_date" value="<?= isset($tenant) ? $tenant['rent_pay_date'] : '' ?>" required>
+            </div>
 
 
+            <button type="submit" name="submit">Submit</button>
+        </form>
+    </div>
+    <nav class="sidebar" id="sidebar">
+        <ul>
+            <li><a href="tenant_form.php">Tenant Section</a></li>
+            <li><a href="manager.php">Manager Section</a></li>
+            <li><a href="logout.php">Logout</a></li>
+        </ul>
+    </nav>
 
-        <button type="submit">Submit</button>
-    </form>
-
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+    </script>
+    
 </body>
 </html>
