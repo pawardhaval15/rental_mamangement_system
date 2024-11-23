@@ -1,8 +1,9 @@
+
 <?php
 $server = "localhost";
 $username = "root";
 $password = "";
-$database = "rent_management";
+$database = "data_rental";
 
 $conn = new mysqli($server, $username, $password, $database);
 

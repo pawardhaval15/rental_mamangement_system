@@ -8,201 +8,134 @@ include('check_login.php');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Welcome Page</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* General Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
         body {
-            display: flex;
-            min-height: 100vh;
-            flex-direction: column;
-            background-color: #f5f8fa;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
         }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            background-color: #343a40;
+            color: white;
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(-100%);
         }
 
-        .header img {
-            width: 50px;
-            height: auto;
+        .sidebar.active {
+            transform: translateX(0);
         }
 
-        .header h1 {
-            color: #2d3e50;
-            font-size: 1.5rem;
-            margin-left: 10px;
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul li {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #495057;
+            padding-left: 10px;
+            transition: padding-left 0.2s ease-in-out;
         }
 
         .hamburger {
-            display: none;
             font-size: 24px;
             cursor: pointer;
         }
 
         .main-content {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            margin-left: 250px;
             padding: 20px;
+            transition: margin-left 0.3s ease-in-out;
         }
 
-        .main-card {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
+        .main-content.collapsed {
+            margin-left: 0;
         }
 
-        .main-card h2 {
-            color: #2d3e50;
-            margin-bottom: 20px;
-        }
-
-        .buttons {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-transform: uppercase;
-            font-weight: bold;
-            color: #fff;
-            margin: 5px;
-            flex: 1 1 auto;
-            max-width: 150px;
-        }
-
-        .button.manager {
-            background-color: #57b846;
-        }
-
-        .button.tenant {
-            background-color: #5d9cec;
-        }
-
-        .sidebar {
-            background-color: #fff;
-            padding: 15px;
-            position: fixed;
-            top: 0;
-            left: -250px; /* Hidden off-screen */
-            height: 100%;
-            width: 250px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-            transition: left 0.3s ease;
-        }
-
-        .sidebar.active {
-            left: 0; /* Show sidebar */
-        }
-
-        .sidebar ul {
-            list-style: none;
-        }
-
-        .sidebar li {
-            margin: 15px 0;
-        }
-
-        .sidebar a {
-            text-decoration: none;
-            color: #2d3e50;
-            font-weight: bold;
-        }
-
-        /* Mobile Styles */
         @media (max-width: 768px) {
-            .hamburger {
-                display: block; /* Show hamburger icon */
+            .sidebar {
+                transform: translateX(-250px);
             }
 
-            .main-card {
-                max-width: 90%;
-                padding: 15px;
+            .sidebar.active {
+                transform: translateX(0);
             }
 
-            .header h1 {
-                font-size: 1.2rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header {
-                padding: 15px;
-            }
-
-            .header img {
-                width: 40px;
-            }
-
-            .header h1 {
-                font-size: 1rem;
-            }
-
-            .main-card {
-                padding: 10px;
-                max-width: 95%;
-            }
-
-            .button {
-                padding: 8px 15px;
-                max-width: 120px;
+            .main-content {
+                margin-left: 0;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <img src="logo.png" alt="App Logo">
-        <h1>Rental Management App</h1>
-        <span class="hamburger" onclick="toggleSidebar()">☰</span>
-    </div>
-    
-    <div class="main-content">
-        <div class="main-card">
-            <h2>You are a property</h2>
-            <div class="buttons">
-                <button class="button manager" onclick="window.location.href='manager.php'">Manager</button>
-                <button class="button tenant" onclick="window.location.href='tenant_form.php'">Tenant</button>
+    <div class="d-flex">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <ul>
+                <li><a href="manager.php">Manager Section</a></li>
+                <li><a href="tenant_form.php">Tenant Section</a></li>
+                <li><a href="logout.php">Logout</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content collapsed" id="main-content">
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="hamburger" onclick="toggleSidebar()">☰</span>
+                <h1 class="text-center w-100">Welcome to Rental Management</h1>
+            </div>
+            <div class="container mt-5">
+                <div class="row text-center">
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Manager</h5>
+                                <p class="card-text">Access the Manager's section to manage properties and tenants.</p>
+                                <a href="manager.php" class="btn btn-primary">Go to Manager</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Tenant</h5>
+                                <p class="card-text">Access the Tenant's section to manage your account and rental details.</p>
+                                <a href="tenant_form.php" class="btn btn-info">Go to Tenant</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <nav class="sidebar" id="sidebar">
-        <ul>
-            <li><a href="tenant_form.php">Tenant Section</a></li>
-            <li><a href="manager.php">Manager Section</a></li>
-            <li><a href="logout.php">Logout</a></li>
-        </ul>
-    </nav>
-
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
             sidebar.classList.toggle('active');
+            mainContent.classList.toggle('collapsed');
         }
     </script>
 </body>

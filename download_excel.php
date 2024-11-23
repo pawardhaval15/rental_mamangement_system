@@ -15,7 +15,11 @@ if ($result->num_rows > 0) {
     $output = fopen('php://output', 'w');
     
     // Write the column headers
-    $headers = ['ID', 'Tenant Name', 'Address', 'Mobile No', 'Email', 'Property Name', 'Property Type', 'Property Location', 'Property Owner', 'Monthly Rent', 'Deposit'];
+    $headers = ['id', 'code', 'site_name', 'property_type', 'property_location', 'property_address',
+    'pincode', 'property_owners', 'owners_details', 'tenant_name', 'address', 'mobile_no', 'email',
+    'monthly_rent', 'deposit', 'maintenance_charges', 'online_paid', 'cash_paid', 'muncipal_tax',
+    'cma_charges', 'electricity_charges', 'electricity_provider', 'water_charges', 'bank_no', 'bank_name',
+    'bank_ifsc', 'bank_details', 'agreement_date', 'agreement_expiring', 'fitout_time', 'rent_start_date', 'increased_rent', 'agreement_years', 'yearly_escalation_percentage'];
     fputcsv($output, $headers);
     
     // Fetch and write each tenant row
